@@ -11,5 +11,6 @@ public class MainSceneController {
     public TextField txtAddress;
 
     public void txtAddressOnAction(ActionEvent actionEvent) {
+        txtAddress.setText("www.google.com");
     }
 }
