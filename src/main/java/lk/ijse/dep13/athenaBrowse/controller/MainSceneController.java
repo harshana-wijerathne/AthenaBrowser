@@ -98,11 +98,13 @@ public class MainSceneController {
                     String contentType = "";
 
                     while ((line = br.readLine()) != null && !line.isBlank()) {
+                        System.out.println(line);
                         String[] split = line.split(":");
                         header = split[0].strip();
                         value = line.substring(header.length() + 1).strip();
                         if (statusCode >= 300 && statusCode <= 400) {
                             if (header.contains("Location")) {
+                                System.out.println(value);
                                 loadWebPage(value.strip());
                                 break;
                             }
@@ -118,10 +120,12 @@ public class MainSceneController {
                         if ((line = br.readLine()) != null && line.contains("<")) {
                             body = line;
                         }
-                        while ((line = br.readLine()) != null && !line.isBlank()) {
+                        while ((line = br.readLine()) != null) {
                             body += line;
                         }
                         String finalBody = body;
+                        String finalContentType = contentType;
+                        System.out.println(finalBody);
                         Platform.runLater(() -> {
                             wbDisplay.getEngine().loadContent(finalBody, "text/html");
                         });
