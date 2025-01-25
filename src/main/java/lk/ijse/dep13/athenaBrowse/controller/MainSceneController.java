@@ -94,32 +94,41 @@ public class MainSceneController {
                     String line;
                     String newUrl = null;
                     String header;
-                    String value;
+                    String value = null;
+                    String contentType = "";
 
                     while ((line = br.readLine()) != null && !line.isBlank()) {
                         String[] split = line.split(":");
-                        header = split[0];
-                        value = line.substring(header.length() + 1);
+                        header = split[0].strip();
+                        value = line.substring(header.length() + 1).strip();
                         if (statusCode >= 300 && statusCode <= 400) {
                             if (header.contains("Location")) {
                                 loadWebPage(value.strip());
                                 break;
                             }
-                        }else{
-                            value = value.strip();
+                        }
+                        if (header.equalsIgnoreCase("Content-Type")) {
+                            contentType = value.strip();
+                            System.out.println(contentType);
+
                         }
                     }
-                    String body = "";
-                    if((line = br.readLine()) != null && line.contains("<")){
-                        body = line;
+                    if (contentType.toLowerCase().contains("text/html".toLowerCase())) {
+                        String body = "";
+                        if ((line = br.readLine()) != null && line.contains("<")) {
+                            body = line;
+                        }
+                        while ((line = br.readLine()) != null && !line.isBlank()) {
+                            body += line;
+                        }
+                        String finalBody = body;
+                        Platform.runLater(() -> {
+                            wbDisplay.getEngine().loadContent(finalBody, "text/html");
+                        });
+                    } else {
+                        System.out.println("We accept only text/html");
                     }
-                    while ((line = br.readLine()) != null && !line.isBlank()) {
-                        body += line;
-                    }
-                    String finalBody = body;
-                    Platform.runLater(() -> {
-                        wbDisplay.getEngine().loadContent(finalBody, "text/html");
-                    });
+
 
                 } catch (IOException e) {
                     throw new RuntimeException(e);
